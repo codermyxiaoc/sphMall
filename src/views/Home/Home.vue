@@ -5,8 +5,7 @@
         <today-recommend></today-recommend>
         <rank></rank>
         <like></like>
-        <floor></floor>
-        <floor></floor>
+        <floor v-for="item in floor" :key="item.id" :flooritem="item"></floor>
         <brand></brand>
     </div>
 </template>
@@ -19,7 +18,7 @@ import Rank from './childcomps/Rank/Rank.vue';
 import Like from './childcomps/Like/Like.vue';
 import Floor from './childcomps/Floor/Floor.vue';
 import Brand from './childcomps/Brand/Brand.vue';
-
+import { mapState } from 'vuex';
 export default {
     name: 'SphMallHome',
 
@@ -46,6 +45,7 @@ export default {
     },
 
     mounted() {
+        this.$store.dispatch('reqGetFoorLisr')
     },
 
     methods: {
@@ -53,7 +53,9 @@ export default {
     },
 
     computed: {
-    }
+        ...mapState({ floor: state => state.home.floorList })
+    },
+
 };
 </script>
 

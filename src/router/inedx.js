@@ -28,12 +28,16 @@ const routes = [
         }
     },
     {
-        path: '/search/:keywodr?',
-        name: '/search',
-        component: () => import('views/Search/Search.vue'),
+        path: "/search/:keyword?",
+        name: "search",
+        component: () => import('../views/Search/Search.vue'),
         meta: {
-            isfooterxshow: true
-        }
+            show: true,
+        },
+        props: ($route) => ({
+            keyword: $route.params.keyword,
+            k: $route.query.k,
+        }),
     },
     {
         path: '/login',
@@ -55,7 +59,7 @@ const routes = [
 
 const router = new VueRouter({
     routes,
-    mode: 'history'
+    mode: 'history'  
 })
 
 export default router

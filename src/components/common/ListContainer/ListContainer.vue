@@ -3,19 +3,7 @@
         <div class="sortList clearfix">
             <div class="center">
                 <!--banner轮播-->
-                <div class="swiper-container" id="mySwiper">
-                    <div class="swiper-wrapper">
-                        <div class="swiper-slide">
-                            <img src="./images/banner1.jpg" />
-                        </div>
-                    </div>
-                    <!-- 如果需要分页器 -->
-                    <div class="swiper-pagination"></div>
-
-                    <!-- 如果需要导航按钮 -->
-                    <div class="swiper-button-prev"></div>
-                    <div class="swiper-button-next"></div>
-                </div>
+                <swiper :imglist="bannerLis"></swiper>
             </div>
             <div class="right">
                 <div class="news">
@@ -99,8 +87,10 @@
         </div>
     </div>
 </template>
-
 <script>
+import Swiper from 'components/content/swiper/swiper.vue';
+
+import { mapState } from 'vuex';
 export default {
     name: 'MyxcmallListContainer',
 
@@ -109,19 +99,24 @@ export default {
             
         };
     },
+    components: {
+        Swiper
+    },
 
     mounted() {
-        
+        this.$store.dispatch('reqGetBannerList')  
     },
 
     methods: {
         
     },
+    computed: {
+        ...mapState({ bannerLis: state => state.home.bannerLis})
+    },
 };
 </script>
 
 <style lang="less" scoped>
-
 .list-container {
     width: 1200px;
     margin: 0 auto;

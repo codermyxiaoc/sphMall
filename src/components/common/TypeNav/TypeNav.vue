@@ -99,7 +99,7 @@ export default {
             }else{
                 query.category3Id = category3id
             }
-            let loction = { name: '/search'}
+            let loction = { name: 'search'}
             loction.query = query
             if (this.$route.params) {
                 loction.params = this.$route.params

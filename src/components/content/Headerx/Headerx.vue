@@ -65,14 +65,15 @@ export default {
             this.$router.push('/register')
         },
         searchclick() {
-        
-            this.$router.push({
-                name: '/search',
-                params:{
-                    keyword: this.searchvalue
-                },
-                query: this.$route.query
-            })
+            console.log(this.$route.query);
+            if (this.$route.query) {
+                let location = {
+                    name: 'search',
+                    params: { keyword: this.searchvalue || undefined },
+                };
+                location.query = this.$route.query;
+                this.$router.push(location);
+            }
            /*  this.$router.push({ 
                 name: 'search',
                 params: { key: this.searchvalue }
