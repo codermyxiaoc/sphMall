@@ -46,6 +46,11 @@ export default {
 
     mounted() {
         this.$store.dispatch('reqGetFoorLisr')
+        try {
+            this.$store.dispatch('getuserinfo')
+        } catch (error) {
+            alert(error.message)
+        }
     },
 
     methods: {

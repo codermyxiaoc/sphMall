@@ -21,6 +21,11 @@ export default {
     }
   },
   mounted() {
+    try {
+      this.$store.dispatch('getuserinfo')
+    } catch (error) {
+      alert(error.message)
+    }
     this.$store.dispatch('categoryList')
   }
 }

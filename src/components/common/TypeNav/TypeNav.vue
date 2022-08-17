@@ -91,7 +91,7 @@ export default {
         onerouet(event) {
             let { categoryname, category1id, category2id, category3id } = event.target.dataset
             if (categoryname) {
-            const query = { categoryname: categoryname }
+            const query = { categoryName: categoryname }
             if (category1id){
                 query.category1Id = category1id
             } else if(category2id) {

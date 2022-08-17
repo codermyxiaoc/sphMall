@@ -1,122 +1,100 @@
 <template>
-    <div>
-        <type-nav :isshow="true"></type-nav>
-        <div class="main">
-            <div class="py-container">
-                <!--bread-->
-                <div class="bread">
-                    <ul class="fl sui-breadcrumb">
-                        <li>
-                            <a href="#">全部结果</a>
-                        </li>
-                    </ul>
-                    <ul class="fl sui-tag">
-                        <li class="with-x">手机</li>
-                        <li class="with-x">iphone<i>×</i></li>
-                        <li class="with-x">华为<i>×</i></li>
-                        <li class="with-x">OPPO<i>×</i></li>
-                    </ul>
-                </div>
-
-                <!--selector-->
-                <SearchSelector />
-
-                <!--details-->
-                <div class="details clearfix">
-                    <div class="sui-navbar">
-                        <div class="navbar-inner filter">
-                            <ul class="sui-nav">
-                                <li class="active">
-                                    <a href="#">综合</a>
-                                </li>
-                                <li>
-                                    <a href="#">销量</a>
-                                </li>
-                                <li>
-                                    <a href="#">新品</a>
-                                </li>
-                                <li>
-                                    <a href="#">评价</a>
-                                </li>
-                                <li>
-                                    <a href="#">价格⬆</a>
-                                </li>
-                                <li>
-                                    <a href="#">价格⬇</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="goods-list">
-                        <ul class="yui3-g">
-                            <li class="yui3-u-1-5" v-for="item in goodsList" :key="item.id">
-                                <div class="list-wrap">
-                                    <div class="p-img">
-                                        <a href="item.html" target="_blank">
-                                            <img :src="item.defaultImg" /></a>
-                                    </div>
-                                    <div class="price">
-                                        <strong>
-                                            <em>¥</em>
-                                            <i>&nbsp;{{item.price}}.00</i>
-                                        </strong>
-                                    </div>
-                                    <div class="attr">
-                                        <a target="_blank" href="item.html"
-                                            title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{ item.title }}</a>
-                                    </div>
-                                    <div class="commit">
-                                        <i class="command">已有<span>2000</span>人评价</i>
-                                    </div>
-                                    <div class="operate">
-                                        <a href="success-cart.html" target="_blank"
-                                            class="sui-btn btn-bordered btn-danger">加入购物车</a>
-                                        <a href="javascript:void(0);" class="sui-btn btn-bordered">收藏</a>
-                                    </div>
-                                </div>
-                            </li>
-
-                        </ul>
-                    </div>
-                    <div class="fr page">
-                        <div class="sui-pagination clearfix">
-                            <ul>
-                                <li class="prev disabled">
-                                    <a href="#">«上一页</a>
-                                </li>
-                                <li class="active">
-                                    <a href="#">1</a>
-                                </li>
-                                <li>
-                                    <a href="#">2</a>
-                                </li>
-                                <li>
-                                    <a href="#">3</a>
-                                </li>
-                                <li>
-                                    <a href="#">4</a>
-                                </li>
-                                <li>
-                                    <a href="#">5</a>
-                                </li>
-                                <li class="dotted"><span>...</span></li>
-                                <li class="next">
-                                    <a href="#">下一页»</a>
-                                </li>
-                            </ul>
-                            <div><span>共10页&nbsp;</span></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div>
+    <type-nav :isshow="true"></type-nav>
+    <div class="main">
+      <div class="py-container">
+        <!--bread-->
+        <div class="bread">
+          <ul class="fl sui-breadcrumb">
+            <li>
+              <a href="#">全部结果</a>
+            </li>
+          </ul>
+          <ul class="fl sui-tag">
+            <li class="with-x" v-if="search.categoryName">
+              {{search.categoryName}}<i @click="removecategoryname">×</i>
+            </li>
+            <li class="with-x" v-if="search.keyword">
+              {{search.keyword}}<i @click="removekeyword">×</i>
+            </li>
+            <li class="with-x" v-if="search.trademark">
+              {{ search.trademark.split(':')[1]}}<i @click="removetrademark">×</i>
+            </li>
+            <li class="with-x" v-for="item in search.props" :key="item.split(':')[0]">{{ item.split(':')[1] }}<i
+                @click="removeprops(item)">×</i>
+            </li>
+          </ul>
         </div>
+
+        <!--selector-->
+        <SearchSelector @tradeMatkHandler="tradeMatkHandler" @attrinfo="attrinfo" />
+
+        <!--details-->
+        <div class="details clearfix">
+          <div class="sui-navbar">
+            <div class="navbar-inner filter">
+              <ul class="sui-nav">
+                <li :class="{ active: isone }" @click="changeOrder('1')">
+                  <a>综合<span v-show="isone">
+                      <span v-show="isAsc">⬆</span>
+                      <span v-show="isDesc">⬇</span>
+                    </span></a>
+                </li>
+                <li :class="{ active: istow}" @click="changeOrder('2')">
+                  <a>价格<span v-show="istow">
+                      <span v-show="isAsc">⬆</span>
+                      <span v-show="isDesc">⬇</span>
+                    </span></a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="goods-list">
+            <ul class="yui3-g">
+              <li class="yui3-u-1-5" v-for="item in goodsList" :key="item.id">
+                <div class="list-wrap">
+                  <div class="p-img">
+                    <router-link :to="`/detail/${item.id}`">
+                      <a href="item.html" target="_blank">
+                        <img v-lazy="item.defaultImg" /></a>
+                    </router-link>
+                  </div>
+                  <div class="price">
+                    <strong>
+                      <em>¥</em>
+                      <i>&nbsp;{{item.price}}.00</i>
+                    </strong>
+                  </div>
+                  <div class="attr">
+                    <a target="_blank" href="item.html" title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{ item.title
+                      }}</a>
+                  </div>
+                  <div class="commit">
+                    <i class="command">已有<span>2000</span>人评价</i>
+                  </div>
+                  <div class="operate">
+                    <a href="success-cart.html" target="_blank" class="sui-btn btn-bordered btn-danger">加入购物车</a>
+                    <a href="javascript:void(0);" class="sui-btn btn-bordered">收藏</a>
+                  </div>
+                </div>
+              </li>
+
+            </ul>
+          </div>
+          <pagination :pagedata="{ pageNo: search.pageNo, pageSize: search.pageSize, total: total, continus: 5}"
+            @getPageON="getpageON">
+          </pagination>
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters ,mapState} from 'vuex';
 import SearchSelector from './SearchSelector/SearchSelector'
 import TypeNav from 'components/common/TypeNav/TypeNav.vue';
+import Pagination from 'components/content/Pagination/Pagination.vue';
 export default {
     
     name: 'MyxcmallSearch1',
@@ -142,7 +120,8 @@ export default {
     },
     components: {
         SearchSelector,
-        TypeNav
+        TypeNav,
+        Pagination,
     },
 
     mounted() {
@@ -152,22 +131,95 @@ export default {
     methods: {
         getData() {
             this.$store.dispatch('GetsearchList', this.search)
+        },
+        removecategoryname() {
+          this.search.categoryName = undefined
+          this.removeid()
+          this.$router.push({
+            name: 'search',
+            params: this.$route.params
+          })
+        },
+        removeid() {
+          this.search.category1Id = undefined
+          this.search.category2Id = undefined
+          this.search.category3Id = undefined
+        },
+        removekeyword() {
+          this.search.keyword = undefined
+          this.$router.push({
+            name: 'search',
+            query: this.$route.query
+          })
+          this.$bus.$emit("clear")
+      },
+      tradeMatkHandler(value) {
+        this.search.trademark = value.tmId + ':' + value.tmName
+        this.getData()
+      },
+      removetrademark() {
+        this.search.trademark = undefined
+        this.getData()
+      },
+      attrinfo(value) {
+        
+        if (this.search.props.indexOf(value) === -1) {
+          this.search.props.push(value)
+          this.getData()
         }
+        console.log(this.search.props);
+      },
+      removeprops(value) {
+        this.search.props.splice(this.search.props.indexOf(value),1)
+        this.getData()
+      },
+      changeOrder(value) {
+        if (this.search.order.indexOf(value) !== -1) {
+          if (this.isAsc) {
+            this.search.order = value + ":desc"
+          }else
+          {
+            this.search.order = value + ":asc"
+          }
+        }else 
+        {
+          if (this.isAsc) {
+            this.search.order = value + ":desc"
+          } else {
+            this.search.order = value + ":asc"
+          }
+        }
+        this.getData()
+      }, 
+      getpageON(pageON) {
+        this.search.pageNo = pageON
+        this.getData()
+      },
     },
     computed: {
-        ...mapGetters(['goodsList', 'attrsList', 'trademarkList'])
-    },
+      ...mapGetters(['goodsList']),
+      ...mapState({ total: state => state.search.searchlist.total }),
+        isone() {
+          return this.search.order.indexOf('1') !== -1
+        },
+        istow() {
+          return this.search.order.indexOf('2') !== -1
+        },
+        isAsc() {
+          return this.search.order.indexOf('asc') !== -1
+        },
+        isDesc() {
+          return this.search.order.indexOf('desc') !== -1
+       },
+      
+    }, 
     watch: {
         $route() {
             Object.assign(this.search, this.$route.query, this.$route.params)
             this.getData()
-            this.search.category1Id = ''
-            this.search.category2Id = ''
-            this.search.category3Id = ''
+            this.removeid()
         },
-    }
-    
-   
+    }  
 };
 </script>
 
@@ -411,93 +463,6 @@ export default {
                   }
                 }
               }
-            }
-          }
-        }
-
-        .page {
-          width: 733px;
-          height: 66px;
-          overflow: hidden;
-          float: right;
-
-          .sui-pagination {
-            margin: 18px 0;
-
-            ul {
-              margin-left: 0;
-              margin-bottom: 0;
-              vertical-align: middle;
-              width: 490px;
-              float: left;
-
-              li {
-                line-height: 18px;
-                display: inline-block;
-
-                a {
-                  position: relative;
-                  float: left;
-                  line-height: 18px;
-                  text-decoration: none;
-                  background-color: #fff;
-                  border: 1px solid #e0e9ee;
-                  margin-left: -1px;
-                  font-size: 14px;
-                  padding: 9px 18px;
-                  color: #333;
-                }
-
-                &.active {
-                  a {
-                    background-color: #fff;
-                    color: #e1251b;
-                    border-color: #fff;
-                    cursor: default;
-                  }
-                }
-
-                &.prev {
-                  a {
-                    background-color: #fafafa;
-                  }
-                }
-
-                &.disabled {
-                  a {
-                    color: #999;
-                    cursor: default;
-                  }
-                }
-
-                &.dotted {
-                  span {
-                    margin-left: -1px;
-                    position: relative;
-                    float: left;
-                    line-height: 18px;
-                    text-decoration: none;
-                    background-color: #fff;
-                    font-size: 14px;
-                    border: 0;
-                    padding: 9px 18px;
-                    color: #333;
-                  }
-                }
-
-                &.next {
-                  a {
-                    background-color: #fafafa;
-                  }
-                }
-              }
-            }
-
-            div {
-              color: #333;
-              font-size: 14px;
-              float: right;
-              width: 241px;
             }
           }
         }

@@ -6,15 +6,19 @@
                 <div class="container">
                     <div class="loginList">
                         <p>尚品汇欢迎您！</p>
-                        <p>
+                        <p v-if="!username">
                             <span>请</span>
                             <a @click="loginclick" href="javascript:;">登录</a>
                             <a @click="registerclick" href="javascript:;" class="register">免费注册</a>
                         </p>
+                        <p v-else>
+                            <a>{{ username }}</a>
+                            <a class="register" @click="exitlogin">退出登入</a>
+                        </p>
                     </div>
                     <div class="typeList">
-                        <a href="###">我的订单</a>
-                        <a href="###">我的购物车</a>
+                        <router-link to="/Center/myorder">我的订单</router-link>
+                        <router-link to="/ShopCart">我的购物车</router-link>
                         <a href="###">我的尚品汇</a>
                         <a href="###">尚品汇会员</a>
                         <a href="###">企业采购</a>
@@ -54,7 +58,9 @@ export default {
     },
 
     mounted() {
-        
+        this.$bus.$on('clear',() => {
+            this.searchvalue = ''
+        })
     },
 
     methods: {
@@ -65,7 +71,6 @@ export default {
             this.$router.push('/register')
         },
         searchclick() {
-            console.log(this.$route.query);
             if (this.$route.query) {
                 let location = {
                     name: 'search',
@@ -78,9 +83,22 @@ export default {
                 name: 'search',
                 params: { key: this.searchvalue }
             }) */
+        },
+        async exitlogin() {
+            try {
+                await this.$store.dispatch('getexitlogin')
+                localStorage.removeItem('token')
+                this.$router.push('/home')
+            } catch (error) {
+                alert(error.message)
+            }
         }
-
     },
+    computed: {
+        username() {
+            return this.$store.state.user.userinfo.name
+        }
+    }
 };
 </script>
 
